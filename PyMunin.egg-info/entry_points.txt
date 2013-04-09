@@ -1,0 +1,27 @@
+[console_scripts]
+pymunin-wanpipestats = pymunin.plugins.wanpipestats:main
+pymunin-apachestats = pymunin.plugins.apachestats:main
+pymunin-memcachedstats = pymunin.plugins.memcachedstats:main
+pymunin-tomcatstats = pymunin.plugins.tomcatstats:main
+pymunin-varnishstats = pymunin.plugins.varnishstats:main
+pymunin-communitystats = pymunin.plugins.communitystats:main
+pymunin-nginxstats = pymunin.plugins.nginxstats:main
+pymunin-phpapcstats = pymunin.plugins.phpapcstats:main
+pymunin-mysqlstats = pymunin.plugins.mysqlstats:main
+pymunin-procstats = pymunin.plugins.procstats:main
+pymunin-sysstats = pymunin.plugins.sysstats:main
+pymunin-diskiostats = pymunin.plugins.diskiostats:main
+pymunin-rackspacestats = pymunin.plugins.rackspacestats:main
+pymunin-netifacestats = pymunin.plugins.netifacestats:main
+pymunin-redisstats = pymunin.plugins.redisstats:main
+pymunin-ntphostoffsets = pymunin.plugins.ntphostoffsets:main
+pymunin-diskusagestats = pymunin.plugins.diskusagestats:main
+pymunin-asteriskstats = pymunin.plugins.asteriskstats:main
+pymunin-lighttpdstats = pymunin.plugins.lighttpdstats:main
+pymunin-phpfpmstats = pymunin.plugins.phpfpmstats:main
+pymunin-netstats = pymunin.plugins.netstats:main
+pymunin-ntpstats = pymunin.plugins.ntpstats:main
+pymunin-ntphostoffset_ = pymunin.plugins.ntphostoffset_:main
+pymunin-fsstats = pymunin.plugins.fsstats:main
+pymunin-pgstats = pymunin.plugins.pgstats:main
+
