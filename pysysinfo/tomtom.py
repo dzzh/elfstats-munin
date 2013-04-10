@@ -4,8 +4,13 @@
 import ConfigParser
 import logging
 
+#File with aggregated data created by munindaemon
 DUMP_FILE = '/tmp/munindaemon.data'
-IMPORTANT_RESPONSE_CODES = ['200','404','500']
+
+#Charts for these codes will be drawn separately, string values
+IMPORTANT_RESPONSE_CODES = []
+
+#No aggregate response time graphs for these graphs will be created
 SMALL_GROUPS = ['server','main','activation']
 
 class TomTomInfo:

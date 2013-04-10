@@ -148,7 +148,7 @@ class MuninTomTomPlugin(MuninPlugin):
                     graph.addField('p50', 'median', draw='LINE1', type='GAUGE', info='median',colour='006400')
                     graph.addField('avg', 'average', draw='LINE2', type='GAUGE', info='average',colour='000080')
                     graph.addField('p90', '90%', draw='LINE1', type='GAUGE', info='90%',colour='FF1493')
-                    graph.addField('p99', '99%', draw='LINE1', type='GAUGE', info='99%',colour='800000')
+                    graph.addField('p99', '99%', draw='LINE2', type='GAUGE', info='99%',colour='800000')
                     graph.addField('max', 'longest', draw='LINE1', type='GAUGE', info='longest',colour='FF0000')
                     self.appendGraph(graph_name, graph)
 
