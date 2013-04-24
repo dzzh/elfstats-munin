@@ -4,9 +4,6 @@
 import ConfigParser
 import logging
 
-#File with aggregated data created by munindaemon
-DUMP_FILE = '/tmp/munindaemon.data'
-
 #Charts for these codes will be drawn separately, string values
 IMPORTANT_RESPONSE_CODES = []
 
@@ -16,7 +13,9 @@ SMALL_GROUPS = ['server','main','activation']
 class TomTomInfo:
     """Class to retrieve stats for TomTom servers"""
 
-    def __init__(self):
+    def __init__(self, dump_file):
+        self.dump_file = dump_file
+
         self.methods = dict()
         self.response_codes = dict()
 
@@ -34,12 +33,11 @@ class TomTomInfo:
         self.response_codes.clear()
 
         parser = ConfigParser.RawConfigParser()
-        parser.read(DUMP_FILE)
+        parser.read(self.dump_file)
 
         sections = parser.sections()
 
         for section in sections:
-            self.logger.info(section)
             if section.startswith('method'):
                 group = section.split('_',2)[1]
                 name = section.split('_',2)[2]

@@ -45,7 +45,7 @@ for modname in modules:
 
 
 class install(_install): 
-    "Extend base install class to provide a post-install step."
+    """Extend base install class to provide a post-install step."""
 
     def run(self):
         if os.environ.has_key('MUNIN_PLUGIN_DIR'):
@@ -130,4 +130,7 @@ setup(
     ],
     long_description=read_file('README.md'),
     entry_points={'console_scripts': console_scripts},
+    data_files = [
+        ('/etc/munin/plugin-conf.d',['config/tomtomstats.conf']),
+    ]
 )
