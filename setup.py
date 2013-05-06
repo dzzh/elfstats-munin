@@ -8,10 +8,8 @@ from  setuptools.command.install import install as _install
 import pymunin #@UnusedImport
 import pymunin.plugins
 
-
 PYMUNIN_SCRIPT_FILENAME_PREFIX = u'pymunin'
-PYMUNIN_PLUGIN_DIR = u'./share/munin/plugins'
-
+PYMUNIN_PLUGIN_DIR = u'/usr/share/munin/plugins'
 
 def read_file(filename):
     """Read a file into a string"""
@@ -48,30 +46,18 @@ class install(_install):
     """Extend base install class to provide a post-install step."""
 
     def run(self):
-        if os.environ.has_key('MUNIN_PLUGIN_DIR'):
-            munin_plugin_dir = os.environ.get('MUNIN_PLUGIN_DIR')
-        elif self.root is None:
-            munin_plugin_dir = os.path.normpath(
-                                    os.path.join(self.prefix,
-                                                 PYMUNIN_PLUGIN_DIR))
-        else:
-            munin_plugin_dir = os.path.normpath(
-                                    os.path.join(self.root,
-                                                 os.path.relpath(self.prefix, '/'),
-                                                 PYMUNIN_PLUGIN_DIR))
         _install.run(self)
         # Installing the plugins requires write permission to plugins directory
         # (/usr/share/munin/plugins) which is default owned by root.
-        print "Munin Plugin Directory: %s" % munin_plugin_dir
-        if os.path.exists(munin_plugin_dir):
+        if os.path.exists(PYMUNIN_PLUGIN_DIR):
             try:
                 for name in plugin_names:
                     source = os.path.join(
                         self.install_scripts,
                         u'%s-%s' % (PYMUNIN_SCRIPT_FILENAME_PREFIX, name)
                     )
-                    destination = os.path.join(munin_plugin_dir, name)
-                    print "Installing %s to %s." % (name, munin_plugin_dir)
+                    destination = os.path.join(PYMUNIN_PLUGIN_DIR, name)
+                    print "Installing %s to %s." % (name, PYMUNIN_PLUGIN_DIR)
                     shutil.copy(source, destination)
             except IOError, e:
                 if e.errno in  (errno.EACCES, errno.ENOENT):
@@ -79,10 +65,10 @@ class install(_install):
                     print "*" * 78
                     if e.errno == errno.EACCES:
                         print ("You do not have permission to install the plugins to %s." 
-                               % munin_plugin_dir)
+                               % PYMUNIN_PLUGIN_DIR)
                     if e.errno == errno.ENOENT:
                         print ("Failed installing the plugins to %s. "
-                               "File or directory not found." % munin_plugin_dir)
+                               "File or directory not found." % PYMUNIN_PLUGIN_DIR)
                     script = os.path.join(self.install_scripts, 'pymunin-install')
                     f = open(script, 'w')
                     try:
@@ -92,7 +78,7 @@ class install(_install):
                                 self.install_scripts,
                                 u'%s-%s' % (PYMUNIN_SCRIPT_FILENAME_PREFIX, name)
                             )
-                            destination = os.path.join(munin_plugin_dir, name)
+                            destination = os.path.join(PYMUNIN_PLUGIN_DIR, name)
                             f.write('cp %s %s\n' % (source, destination))
                     finally:
                         f.close()
