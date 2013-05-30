@@ -94,7 +94,7 @@ class install(_install):
 
 setup(
     cmdclass={'install': install},
-    name='PyMunin',
+    name='pymunin-tomtom',
     version=pymunin.__version__,
     author=pymunin.__author__,
     author_email=pymunin.__email__,
@@ -102,7 +102,7 @@ setup(
     maintainer_email=pymunin.__email__,
     packages=find_packages(),
     include_package_data=True,
-    url='http://aouyar.github.com/PyMunin',
+    url='http://vos.intra.local/display/SS3/Monitoring+Apache+performance+at+Community+servers+with+Munin',
     license=pymunin.__license__,
     description=u'Python Module for developing Munin Multigraph Monitoring Plugins.',
     classifiers=[
@@ -112,7 +112,7 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Development Status :: 4 - Beta',
-        'Operating System :: OS Independent',
+        'Operating System :: RHEL 5/6',
     ],
     long_description=read_file('README.md'),
     entry_points={'console_scripts': console_scripts},
