@@ -25,7 +25,6 @@ class TomTomInfo:
         handler = logging.FileHandler("/tmp/tomtom.log")
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
-        self.logger.info('Updating data')
         self.update_data()
 
     def update_data(self):

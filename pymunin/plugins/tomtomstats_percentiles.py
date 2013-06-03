@@ -20,7 +20,7 @@ class MuninTomTomPercentilesPlugin(MuninPlugin):
 
     plugin_name = 'tomtomstats_percentiles'
     isMultigraph = True
-    isMultiInstance = False
+    isMultiInstance = True
 
     def __init__(self, argv=(), env=None, debug=False):
         """Populate Munin Plugin with MuninGraph instances.
@@ -70,10 +70,6 @@ class MuninTomTomPercentilesPlugin(MuninPlugin):
         #
         #RETRIEVING VALUES
         #
-
-        #No data case
-        if self.hasGraph(NO_DATA_GRAPH) and self._show_dummy_graph:
-            self.setGraphVal(NO_DATA_GRAPH,'x',1)
 
         #METHOD percentiles (except of STATIC)
         for key in self._ttInfo.get_method_keys():

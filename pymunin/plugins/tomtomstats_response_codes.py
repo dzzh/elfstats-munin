@@ -18,7 +18,7 @@ class MuninTomTomResponseCodesPlugin(MuninPlugin):
 
     plugin_name = 'tomtomstats_response_codes'
     isMultigraph = True
-    isMultiInstance = False
+    isMultiInstance = True
 
     def __init__(self, argv=(), env=None, debug=False):
         """Populate Munin Plugin with MuninGraph instances.

@@ -19,7 +19,7 @@ class MuninTomTomCallsPlugin(MuninPlugin):
 
     plugin_name = 'tomtomstats_calls'
     isMultigraph = True
-    isMultiInstance = False
+    isMultiInstance = True
 
     def __init__(self, argv=(), env=None, debug=False):
         """Populate Munin Plugin with MuninGraph instances.
