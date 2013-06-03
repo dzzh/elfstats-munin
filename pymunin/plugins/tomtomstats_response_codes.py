@@ -11,6 +11,8 @@ import sys
 from pymunin import MuninPlugin, MuninGraph, muninMain
 from pysysinfo.tomtom import TomTomInfo
 
+NO_DATA_GRAPH = 'tomtomstats_response_codes_no_data'
+
 class MuninTomTomResponseCodesPlugin(MuninPlugin):
     """Multigraph Munin Plugin for monitoring Community servers."""
 
@@ -29,13 +31,23 @@ class MuninTomTomResponseCodesPlugin(MuninPlugin):
         MuninPlugin.__init__(self, argv, env, debug)
         self._ttInfo = TomTomInfo(self.envGet('dump_file'))
         self._category = self.envGet('category',default='tt_resp_codes')
+        self._show_dummy_graph = self.envGet('show_dummy_graph',default=1,conv=int)
 
         #
         # DRAWING
         #
 
+        important_codes = self._ttInfo.get_important_response_codes()
+        all_codes = self._ttInfo.get_response_codes()
+
+        #Special case when no data is available. Output dummy graph not to confuse selinux if it is enabled.
+        if not important_codes and not all_codes and self._show_dummy_graph:
+            if self.graphEnabled(NO_DATA_GRAPH):
+                graph = MuninGraph('Response codes - no data available', self._category, info='No data')
+                self.appendGraph(NO_DATA_GRAPH,graph)
+
         #IMPORTANT RESPONSE CODES
-        for code in self._ttInfo.get_important_response_codes():
+        for code in important_codes:
             graph_name = 'tomtom_response_code_' + code
             if self.graphEnabled(graph_name):
                 if self.hasGraph(graph_name):
@@ -49,7 +61,7 @@ class MuninTomTomResponseCodesPlugin(MuninPlugin):
                 graph.addField(code, code, draw='LINE2', type='GAUGE', info=code)
 
         #OTHER RESPONSE CODES GROUPED BY 100
-        for code in self._ttInfo.get_response_codes():
+        for code in all_codes:
             if not code in self._ttInfo.get_important_response_codes():
                 graph_name = 'tomtom_response_codes_%sXX' % code[0]
                 if self.graphEnabled(graph_name):

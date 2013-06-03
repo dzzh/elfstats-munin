@@ -13,6 +13,8 @@ import sys
 from pymunin import MuninPlugin, MuninGraph, muninMain
 from pysysinfo.tomtom import TomTomInfo
 
+NO_DATA_GRAPH = 'tomtomstats_percentile_no_data'
+
 class MuninTomTomPercentilesPlugin(MuninPlugin):
     """Multigraph Munin Plugin for monitoring Community servers."""
 
@@ -31,13 +33,22 @@ class MuninTomTomPercentilesPlugin(MuninPlugin):
         MuninPlugin.__init__(self, argv, env, debug)
         self._ttInfo = TomTomInfo(self.envGet('dump_file'))
         self._category = self.envGet('category',default='tt_percentiles')
+        self._show_dummy_graph = self.envGet('show_dummy_graph',default=1,conv=int)
 
         #
         # DRAWING
         #
 
+        keys = self._ttInfo.get_method_keys()
+
+        #Special case when no data is available. Output dummy graph not to confuse selinux if it is enabled.
+        if not keys and self._show_dummy_graph:
+            if self.graphEnabled(NO_DATA_GRAPH):
+                graph = MuninGraph('Percentiles - no data available', self._category,info='No data')
+                self.appendGraph(NO_DATA_GRAPH,graph)
+
         #METHOD percentiles (except of STATIC)
-        for key in self._ttInfo.get_method_keys():
+        for key in keys:
             method = self._ttInfo.get_method_by_key(key)
             graph_name = method.get_graph_name()
             if not method.group == 'static':
@@ -59,6 +70,10 @@ class MuninTomTomPercentilesPlugin(MuninPlugin):
         #
         #RETRIEVING VALUES
         #
+
+        #No data case
+        if self.hasGraph(NO_DATA_GRAPH) and self._show_dummy_graph:
+            self.setGraphVal(NO_DATA_GRAPH,'x',1)
 
         #METHOD percentiles (except of STATIC)
         for key in self._ttInfo.get_method_keys():

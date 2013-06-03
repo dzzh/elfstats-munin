@@ -12,6 +12,8 @@ import sys
 from pymunin import MuninPlugin, MuninGraph, muninMain
 from pysysinfo.tomtom import TomTomInfo
 
+NO_DATA_GRAPH = 'tomtomstats_calls_no_data'
+
 class MuninTomTomCallsPlugin(MuninPlugin):
     """Multigraph Munin Plugin for monitoring Community servers."""
 
@@ -30,13 +32,21 @@ class MuninTomTomCallsPlugin(MuninPlugin):
         MuninPlugin.__init__(self, argv, env, debug)
         self._ttInfo = TomTomInfo(self.envGet('dump_file'))
         self._category = self.envGet('category',default='tt_calls')
-
+        self._show_dummy_graph = self.envGet('show_dummy_graph',default=1,conv=int)
         #
         # DRAWING
         #
 
+        keys = self._ttInfo.get_method_keys()
+
+        #Special case when no data is available. Output dummy graph not to confuse selinux if it is enabled.
+        if not keys and self._show_dummy_graph:
+            if self.graphEnabled(NO_DATA_GRAPH):
+                graph = MuninGraph('Calls - no data available', self._category, info='No data')
+                self.appendGraph(NO_DATA_GRAPH,graph)
+
         #NUMBER OF CALLS for method groups
-        for key in self._ttInfo.get_method_keys():
+        for key in keys:
             method = self._ttInfo.get_method_by_key(key)
             graph_name = method.get_graph_group_prefix()+'total_calls'
             if self.graphEnabled(graph_name):
@@ -51,7 +61,7 @@ class MuninTomTomCallsPlugin(MuninPlugin):
                 graph.addField(method.name, method.name, draw='LINE1', type='GAUGE', info=method.name)
 
         #NUMBER OF STALLED CALLS for method groups
-        for key in self._ttInfo.get_method_keys():
+        for key in keys:
             method = self._ttInfo.get_method_by_key(key)
             graph_name = method.get_graph_group_prefix()+'stalled_calls'
             if self.graphEnabled(graph_name):
@@ -71,15 +81,17 @@ class MuninTomTomCallsPlugin(MuninPlugin):
         #RETRIEVING VALUES
         #
 
+        keys = self._ttInfo.get_method_keys()
+
         #NUMBER OF CALLS for method groups
-        for key in self._ttInfo.get_method_keys():
+        for key in keys:
             method = self._ttInfo.get_method_by_key(key)
             graph_name = method.get_graph_group_prefix()+'total_calls'
             if self.hasGraph(graph_name):
                 self.setGraphVal(graph_name,method.name,method.calls)
 
         #NUMBER OF STALLED CALLS for method groups
-        for key in self._ttInfo.get_method_keys():
+        for key in keys:
             method = self._ttInfo.get_method_by_key(key)
             graph_name = method.get_graph_group_prefix()+'stalled_calls'
             if self.hasGraph(graph_name):

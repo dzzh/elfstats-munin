@@ -11,6 +11,8 @@ import sys
 from pymunin import MuninPlugin, MuninGraph, muninMain
 from pysysinfo.tomtom import TomTomInfo
 
+NO_DATA_GRAPH = 'tomtomstats_response_times_no_data'
+
 class MuninTomTomResponseTimesPlugin(MuninPlugin):
     """Multigraph Munin Plugin for monitoring Community servers."""
 
@@ -29,13 +31,22 @@ class MuninTomTomResponseTimesPlugin(MuninPlugin):
         MuninPlugin.__init__(self, argv, env, debug)
         self._ttInfo = TomTomInfo(self.envGet('dump_file'))
         self._category = self.envGet('category',default='tt_resp_times')
+        self._show_dummy_graph = self.envGet('show_dummy_graph',default=1,conv=int)
 
         #
         # DRAWING
         #
 
+        keys = self._ttInfo.get_method_keys()
+
+        #Special case when no data is available. Output dummy graph not to confuse selinux if it is enabled.
+        if not keys and self._show_dummy_graph:
+            if self.graphEnabled(NO_DATA_GRAPH):
+                graph = MuninGraph('Response times - no data available', self._category, info='No data')
+                self.appendGraph(NO_DATA_GRAPH,graph)
+
         #TOTAL RESPONSE TIME for method groups (except small groups)
-        for key in self._ttInfo.get_method_keys():
+        for key in keys:
             method = self._ttInfo.get_method_by_key(key)
             if not method.group in self._ttInfo.get_small_groups():
                 graph_name = method.get_graph_group_prefix()+'response_total'
@@ -51,7 +62,7 @@ class MuninTomTomResponseTimesPlugin(MuninPlugin):
                     graph.addField(method.name, method.name, draw='LINE1', type='GAUGE', info=method.name)
 
         #AVERAGE RESPONSE TIME for method groups (except small groups)
-        for key in self._ttInfo.get_method_keys():
+        for key in keys:
             method = self._ttInfo.get_method_by_key(key)
             if not method.group in self._ttInfo.get_small_groups():
                 graph_name = method.get_graph_group_prefix()+'response_avg'
