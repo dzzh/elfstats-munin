@@ -10,6 +10,9 @@ IMPORTANT_RESPONSE_CODES = []
 #No aggregate response time graphs for these graphs will be created
 SMALL_GROUPS = ['server','main','activation']
 
+#Log file for plugins
+LOG_FILE = "/tmp/tomtom.log"
+
 class TomTomInfo:
     """Class to retrieve stats for TomTom servers"""
 
@@ -22,7 +25,7 @@ class TomTomInfo:
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
         formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-        handler = logging.FileHandler("/tmp/tomtom.log")
+        handler = logging.FileHandler(LOG_FILE)
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
         self.update_data()
@@ -32,6 +35,8 @@ class TomTomInfo:
         self.response_codes.clear()
 
         parser = ConfigParser.RawConfigParser()
+        if not self.dump_file:
+            self.logger.error('Dump file not set. Check env.dump_file setting in plugin configuration')
         parser.read(self.dump_file)
 
         sections = parser.sections()

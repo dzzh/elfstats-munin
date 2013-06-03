@@ -2,3 +2,4 @@ include README.md
 include COPYING.txt
 include download.txt
 recursive-include config *
+recursive-include scripts *
