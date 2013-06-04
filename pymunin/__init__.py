@@ -16,7 +16,7 @@ __copyright__ = "Copyright 2011, Ali Onur Uyar"
 __credits__ = ["Samuel Stauffer (https://github.com/samuel)",
                "Mark Lavin (https://github.com/mlavin)"]
 __license__ = "GPL"
-__version__ = "0.9.31"
+__version__ = "0.9.32"
 __maintainer__ = "Zmicier Zaleznicenka"
 __email__ = "Zmicier.Zaleznicenka@tomtom.com"
 __status__ = "Development"

@@ -69,7 +69,7 @@ class MuninTomTomCallsPlugin(MuninPlugin):
                     graph = self._getGraph(graph_name)
                 else:
                     graph = MuninGraph('Apache - number of stalled calls for %s methods' % method.group.upper(), self._category,
-                        info='Method group %s' % method.group.upper(),
+                        info='Method group %s: number of calls exceeding the threshold (4000 ms by default for community)' % method.group.upper(),
                         args='--base 1000',
                         vlabel='Number of stalled calls in 5 min')
                     self.appendGraph(graph_name, graph)
