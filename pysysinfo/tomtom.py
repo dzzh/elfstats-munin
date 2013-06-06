@@ -13,6 +13,8 @@ SMALL_GROUPS = ['server','main','activation']
 #Log file for plugins
 LOG_FILE = "/tmp/tomtom.log"
 
+EMPTY_VALUE = 'U'
+
 class TomTomInfo:
     """Class to retrieve stats for TomTom servers"""
 
@@ -69,7 +71,7 @@ class TomTomInfo:
         if str(code) in self.response_codes:
             return self.response_codes[str(code)]
         else:
-            return '0'
+            return EMPTY_VALUE
 
     def get_method_by_key(self,key):
         """
@@ -89,14 +91,14 @@ class MethodCallData():
     def __init__(self,group,name):
         self.group = group
         self.name = name
-        self.min = 0
-        self.max = 0
-        self.avg = 0
-        self.calls = 0
-        self.stalled_calls = 0
-        self.p50 = 0
-        self.p90 = 0
-        self.p99 = 0
+        self.min = EMPTY_VALUE
+        self.max = EMPTY_VALUE
+        self.avg = EMPTY_VALUE
+        self.calls = EMPTY_VALUE
+        self.stalled_calls = EMPTY_VALUE
+        self.p50 = EMPTY_VALUE
+        self.p90 = EMPTY_VALUE
+        self.p99 = EMPTY_VALUE
 
     def get_key(self):
         return self.group + '_' + self.name

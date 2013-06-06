@@ -9,7 +9,7 @@
 #%# capabilities=autoconf suggest
 import sys
 from pymunin import MuninPlugin, MuninGraph, muninMain
-from pysysinfo.tomtom import TomTomInfo
+from pysysinfo.tomtom import TomTomInfo, EMPTY_VALUE
 
 NO_DATA_GRAPH = 'tomtomstats_response_times_no_data'
 
@@ -89,7 +89,10 @@ class MuninTomTomResponseTimesPlugin(MuninPlugin):
             if not method.group in self._ttInfo.get_small_groups():
                 graph_name = method.get_graph_group_prefix()+'response_total'
                 if self.hasGraph(graph_name):
-                    self.setGraphVal(graph_name,method.name,int(method.calls) * int(method.avg))
+                    if method.calls != 'U' and method.avg != 'U':
+                        self.setGraphVal(graph_name,method.name,int(method.calls) * int(method.avg))
+                    else:
+                        self.setGraphVal(graph_name,method.name,EMPTY_VALUE)
 
         #AVERAGE RESPONSE TIME for method groups (except of small groups)
         for key in self._ttInfo.get_method_keys():
