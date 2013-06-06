@@ -59,10 +59,10 @@ class MuninTomTomPercentilesPlugin(MuninPlugin):
                         vlabel='Response time in ms')
                     graph.addField('min', 'shortest', draw='LINE1', type='GAUGE', info='longest', colour='696969')
                     graph.addField('p50', 'median', draw='LINE1', type='GAUGE', info='median',colour='006400')
-                    graph.addField('avg', 'average', draw='LINE2', type='GAUGE', info='average',colour='000080')
                     graph.addField('p90', '90%', draw='LINE1', type='GAUGE', info='90%',colour='FF1493')
-                    graph.addField('p99', '99%', draw='LINE2', type='GAUGE', info='99%',colour='800000')
-                    graph.addField('max', 'longest', draw='LINE1', type='GAUGE', info='longest',colour='FF0000')
+                    graph.addField('max', 'longest', draw='LINE1', type='GAUGE', info='longest',colour='800000')
+                    graph.addField('avg', 'average', draw='LINE2', type='GAUGE', info='average',colour='000080')
+                    graph.addField('p99', '99%', draw='LINE2', type='GAUGE', info='99%',colour='FF0000')
                     self.appendGraph(graph_name, graph)
 
     def retrieveVals(self):
