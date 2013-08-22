@@ -1,4 +1,4 @@
-rm -f /usr/share/munin/plugins/tomtomstats_calls
-rm -f /usr/share/munin/plugins/tomtomstats_percentiles
-rm -f /usr/share/munin/plugins/tomtomstats_response_codes
-rm -f /usr/share/munin/plugins/tomtomstats_response_times
+if [ "$1" = 0  ]; then
+rm -f /usr/share/munin/plugins/tomtomstats_*
+/sbin/service munin-node restart
+fi

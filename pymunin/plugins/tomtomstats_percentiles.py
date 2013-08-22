@@ -61,8 +61,8 @@ class MuninTomTomPercentilesPlugin(MuninPlugin):
                     graph.addField('p50', 'median', draw='LINE1', type='GAUGE', info='median',colour='39E639')
                     graph.addField('avg', 'average', draw='LINE2', type='GAUGE', info='average',colour='00CC00')
                     graph.addField('p90', '90%', draw='LINE1', type='GAUGE', info='90%',colour='FF9400')
-                    graph.addField('p99', '99%', draw='LINE2', type='GAUGE', info='99%',colour='FF0000')
                     graph.addField('max', 'longest', draw='LINE1', type='GAUGE', info='longest',colour='FF7373')
+                    graph.addField('p99', '99%', draw='LINE2', type='GAUGE', info='99%',colour='FF0000')
                     self.appendGraph(graph_name, graph)
 
     def retrieveVals(self):
@@ -81,8 +81,8 @@ class MuninTomTomPercentilesPlugin(MuninPlugin):
                     self.setGraphVal(graph_name,'p50',method.p50)
                     self.setGraphVal(graph_name,'avg',method.avg)
                     self.setGraphVal(graph_name,'p90',method.p90)
-                    self.setGraphVal(graph_name,'p99',method.p99)
                     self.setGraphVal(graph_name,'max',method.max)
+                    self.setGraphVal(graph_name,'p99',method.p99)
 
     def autoconf(self):
         return True
