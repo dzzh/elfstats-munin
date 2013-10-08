@@ -1,3 +1,11 @@
 #Generated files
+build/
 dist/
-PyMunin.egg-info
+
+#IDE configuration
+.idea/
+*.iml
+
+#OS X garbage
+.DS_Store
+

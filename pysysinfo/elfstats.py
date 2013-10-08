@@ -1,4 +1,4 @@
-""" Implements TomTomInfo class to gather statistics for TomTom servers"""
+"""Implements ElfstatsInfo class to aggregate statistics from web servers' access logs."""
 
 #Defaults
 import ConfigParser
@@ -8,15 +8,16 @@ import logging
 IMPORTANT_RESPONSE_CODES = []
 
 #No aggregate response time graphs for these graphs will be created
-SMALL_GROUPS = ['server','main','activation']
+SMALL_GROUPS = ['server', 'main', 'activation']
 
 #Log file for plugins
-LOG_FILE = "/tmp/tomtom.log"
+LOG_FILE = "/tmp/elfstats-munin.log"
 
 EMPTY_VALUE = 'U'
 
-class TomTomInfo:
-    """Class to retrieve stats for TomTom servers"""
+
+class ElfstatsInfo:
+    """Class to retrieve stats for web servers"""
 
     def __init__(self, dump_file):
         self.dump_file = dump_file
@@ -45,35 +46,35 @@ class TomTomInfo:
 
         for section in sections:
             if section.startswith('method'):
-                group = section.split('_',2)[1]
-                name = section.split('_',2)[2]
+                group = section.split('_', 2)[1]
+                name = section.split('_', 2)[2]
                 method = MethodCallData(group, name)
-                method.calls = parser.get(section,'calls')
-                method.stalled_calls = parser.get(section,'stalled_calls')
-                method.min = parser.get(section,'shortest')
-                method.max = parser.get(section,'longest')
-                method.avg = parser.get(section,'average')
-                method.p50 = parser.get(section,'p50')
-                method.p90 = parser.get(section,'p90')
-                method.p99 = parser.get(section,'p99')
+                method.calls = parser.get(section, 'calls')
+                method.stalled_calls = parser.get(section, 'stalled_calls')
+                method.min = parser.get(section, 'shortest')
+                method.max = parser.get(section, 'longest')
+                method.avg = parser.get(section, 'average')
+                method.p50 = parser.get(section, 'p50')
+                method.p90 = parser.get(section, 'p90')
+                method.p99 = parser.get(section, 'p99')
                 self.methods[method.get_key()] = method
             if section == 'response_codes':
                 for option in parser.options(section):
-                    self.response_codes[option] = parser.get(section,option)
+                    self.response_codes[option] = parser.get(section, option)
 
     def get_method_keys(self):
-            return sorted(self.methods.keys())
+        return sorted(self.methods.keys())
 
     def get_response_codes(self):
-            return sorted(self.response_codes.keys())
+        return sorted(self.response_codes.keys())
 
-    def get_number_responses_by_code(self,code):
+    def get_number_responses_by_code(self, code):
         if str(code) in self.response_codes:
             return self.response_codes[str(code)]
         else:
             return EMPTY_VALUE
 
-    def get_method_by_key(self,key):
+    def get_method_by_key(self, key):
         """
         @param string key: key
         @return MethodCallData: method
@@ -86,9 +87,9 @@ class TomTomInfo:
     def get_small_groups(self):
         return SMALL_GROUPS
 
-class MethodCallData():
 
-    def __init__(self,group,name):
+class MethodCallData():
+    def __init__(self, group, name):
         self.group = group
         self.name = name
         self.min = EMPTY_VALUE
@@ -104,10 +105,10 @@ class MethodCallData():
         return self.group + '_' + self.name
 
     def get_full_name(self):
-        return '%s:%s' %(self.group.upper(),self.name)
+        return '%s:%s' % (self.group.upper(), self.name)
 
     def get_graph_name(self):
-        return 'tomtom_%s_%s' %(self.group.lower(),self.name)
+        return 'elfstats_%s_%s' % (self.group.lower(), self.name)
 
     def get_graph_group_prefix(self):
-        return 'tomtom_%s_' % self.group.lower()
+        return 'elfstats_%s_' % self.group.lower()

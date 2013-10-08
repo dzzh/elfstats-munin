@@ -16,15 +16,13 @@ __copyright__ = "Copyright 2011, Ali Onur Uyar"
 __credits__ = ["Samuel Stauffer (https://github.com/samuel)",
                "Mark Lavin (https://github.com/mlavin)"]
 __license__ = "GPL"
-__version__ = "0.9.34"
+__version__ = "1.0"
 __maintainer__ = "Zmicier Zaleznicenka"
-__email__ = "Zmicier.Zaleznicenka@tomtom.com"
+__email__ = "Zmicier.Zaleznicenka@gmail.com"
 __status__ = "Development"
-
 
 maxLabelLenGraphSimple = 40
 maxLabelLenGraphDual = 14
-
 
 
 class MuninAttrFilter:
@@ -37,9 +35,9 @@ class MuninAttrFilter:
     - Any Attribute that is in the Exclude List is disabled.
     
     """
-    
-    def __init__(self, list_include = None, list_exclude = None,
-                 attr_regex = None, default = True):
+
+    def __init__(self, list_include=None, list_exclude=None,
+                 attr_regex=None, default=True):
         """Initialize Munin Attribute Filter.
         
         @param list_include: Include List (List of attributes that are enabled.)
@@ -68,7 +66,7 @@ class MuninAttrFilter:
             for attr in list_exclude:
                 if not self._regex or self._regex.search(attr):
                     self._attrs[attr] = False
-    
+
     def check(self, attr):
         """Check if the attribute attr is in the include or exclude list.
         Returns True if the attribute is enabled, false otherwise.
@@ -97,7 +95,7 @@ class MuninPlugin:
     isMultigraph = False
     """True for Multi-Graph Plugins, and False for Simple Plugins.
     Must be overriden in child classes to indicate plugin type."""
-    
+
     isMultiInstance = False
     """True for Multi-Graph Plugins with Multi-Instance support, False otherwise.
     Must be overriden in child classes to indicate plugin type."""
@@ -123,9 +121,9 @@ class MuninPlugin:
         self._instanceName = None
         self._instanceLabel = None
         self._nestedGraphs = False
-        if (self.plugin_name is not None and argv is not None and len(argv) > 0 
+        if (self.plugin_name is not None and argv is not None and len(argv) > 0
             and re.search('_$', self.plugin_name)):
-            mobj = re.match("%s(\S+)$" % self.plugin_name, 
+            mobj = re.match("%s(\S+)$" % self.plugin_name,
                             os.path.basename(argv[0]))
             if mobj:
                 self.arg0 = mobj.group(1)
@@ -136,7 +134,7 @@ class MuninPlugin:
             if self.isMultiInstance:
                 self._instanceName = self.envGet('instance_name')
                 if self._instanceName is not None:
-                    label_type = self.envGet('instance_label_format', 
+                    label_type = self.envGet('instance_label_format',
                                              'suffix').lower()
                     if label_type in ('suffix', 'prefix'):
                         self._instanceLabel = self.envGet('instance_label',
@@ -145,7 +143,7 @@ class MuninPlugin:
                     else:
                         self._instanceLabel = None
                         self._instanceLabelType = None
-                
+
     def _parseEnv(self, env=None):
         """Private method for parsing through environment variables.
         
@@ -161,13 +159,13 @@ class MuninPlugin:
         """
         if not env:
             env = self._env
-        if env.has_key('MUNIN_STATEFILE'):
+        if 'MUNIN_STATEFILE' in env:
             self._stateFile = env.get('MUNIN_STATEFILE')
         else:
             self._stateFile = '/tmp/munin-state-%s' % self.plugin_name
-        if env.has_key('MUNIN_CAP_DIRTY_CONFIG'):
+        if 'MUNIN_CAP_DIRTY_CONFIG' in env:
             self._dirtyConfig = True
-            
+
     def _getGraph(self, graph_name, fail_noexist=False):
         """Private method for returning graph object with name graph_name. 
         
@@ -182,7 +180,7 @@ class MuninPlugin:
             raise AttributeError("Invalid graph name: %s" % graph_name)
         else:
             return graph
-            
+
     def _getSubGraph(self, parent_name, graph_name, fail_noexist=False):
         """Private method for returning subgraph object with name graph_name 
         and parent graph with name parent_name. 
@@ -195,7 +193,7 @@ class MuninPlugin:
         """
         if not self.isMultigraph:
             raise AttributeError("Simple Munin Plugins cannot have subgraphs.")
-        if self._graphDict.has_key(parent_name) is not None:
+        if parent_name in self._graphDict:
             subgraphs = self._subgraphDict.get(parent_name)
             if subgraphs is not None:
                 subgraph = subgraphs.get(graph_name)
@@ -212,7 +210,7 @@ class MuninPlugin:
             raise AttributeError("Invalid parent graph name %s "
                                  "for subgraph %s."
                                  % (parent_name, graph_name))
-    
+
     def _getMultigraphID(self, graph_name, subgraph_name=None):
         """Private method for generating Multigraph ID from graph name and 
         subgraph name. 
@@ -226,14 +224,14 @@ class MuninPlugin:
             if subgraph_name is None:
                 return "%s_%s" % (graph_name, self._instanceName)
             else:
-                return "%s_%s.%s_%s" % (graph_name, self._instanceName, 
+                return "%s_%s.%s_%s" % (graph_name, self._instanceName,
                                         subgraph_name, self._instanceName)
         else:
             if subgraph_name is None:
                 return graph_name
             else:
                 return "%s.%s" % (graph_name, subgraph_name)
-            
+
     def _formatConfig(self, conf_dict):
         """Formats configuration directory from Munin Graph and returns 
         multi-line value entries for the plugin config cycle.
@@ -245,22 +243,22 @@ class MuninPlugin:
         confs = []
         graph_dict = conf_dict['graph']
         field_list = conf_dict['fields']
-        
+
         # Order and format Graph Attributes
         title = graph_dict.get('title')
         if title is not None:
             if self.isMultiInstance and self._instanceLabel is not None:
                 if self._instanceLabelType == 'suffix':
-                    confs.append("graph_%s %s - %s" % ('title', 
-                                                       title, 
+                    confs.append("graph_%s %s - %s" % ('title',
+                                                       title,
                                                        self._instanceLabel,))
                 elif self._instanceLabelType == 'prefix':
-                    confs.append("graph_%s %s - %s" % ('title', 
+                    confs.append("graph_%s %s - %s" % ('title',
                                                        self._instanceLabel,
                                                        title,))
             else:
                 confs.append("graph_%s %s" % ('title', title))
-        for key in ('category', 'vlabel', 'info', 'args', 'period', 
+        for key in ('category', 'vlabel', 'info', 'args', 'period',
                     'scale', 'total', 'order', 'printf', 'width', 'height'):
             val = graph_dict.get(key)
             if val is not None:
@@ -274,7 +272,7 @@ class MuninPlugin:
         # Order and Format Field Attributes
         for (field_name, field_attrs) in field_list:
             for key in ('label', 'type', 'draw', 'info', 'extinfo', 'colour',
-                        'negative', 'graph', 'min', 'max', 'cdef', 
+                        'negative', 'graph', 'min', 'max', 'cdef',
                         'line', 'warning', 'critical'):
                 val = field_attrs.get(key)
                 if val is not None:
@@ -285,7 +283,7 @@ class MuninPlugin:
                             val = "no"
                     confs.append("%s.%s %s" % (field_name, key, val))
         return "\n".join(confs)
-    
+
     def _formatVals(self, val_list):
         """Formats value list from Munin Graph and returns multi-line value
         entries for the plugin fetch cycle.
@@ -304,16 +302,16 @@ class MuninPlugin:
             else:
                 vals.append("%s.value U" % (name,))
         return "\n".join(vals)
-            
+
     def envHasKey(self, name):
         """Return True if environment variable with name exists.  
         
-        @param name: Name of environtment variable.
+        @param name: Name of environment variable.
         @return:     True if environment variable is defined.
         
         """
-        return self._env.has_key(name)
-    
+        return name in self._env
+
     def envGet(self, name, default=None, conv=None):
         """Return value for environment variable or None.  
         
@@ -323,16 +321,15 @@ class MuninPlugin:
         @return:        Value of environment variable.
         
         """
-        if self._env.has_key(name):
+        if name in self._env:
             if conv is not None:
                 return conv(self._env.get(name))
             else:
                 return self._env.get(name)
         else:
             return default
-        
-    
-    def envGetList(self, name, attr_regex = '^\w+$', conv=None):
+
+    def envGetList(self, name, attr_regex='^\w+$', conv=None):
         """Parse the plugin environment variables to return list from variable
         with name list_<name>. The value of the variable must be a comma 
         separated list of items.
@@ -348,7 +345,7 @@ class MuninPlugin:
         """
         key = "list_%s" % name
         item_list = []
-        if self._env.has_key(key):
+        if key in self._env:
             if attr_regex:
                 recomp = re.compile(attr_regex)
             else:
@@ -360,10 +357,10 @@ class MuninPlugin:
                         item_list.append(conv(attr))
                     else:
                         item_list.append(attr)
-                    
+
         return item_list
-    
-    def envRegisterFilter(self, name, attr_regex = '^\w+$', default = True):
+
+    def envRegisterFilter(self, name, attr_regex='^\w+$', default=True):
         """Register filter for including, excluding attributes in graphs through 
         the use of include_<name> and exclude_<name> environment variables.
         The value of the variables must be a comma separated list of items. 
@@ -383,9 +380,9 @@ class MuninPlugin:
                 attrs[prefix] = [attr.strip() for attr in val.split(',')]
             else:
                 attrs[prefix] = []
-        self._filters[name] = MuninAttrFilter(attrs['include'], attrs['exclude'], 
+        self._filters[name] = MuninAttrFilter(attrs['include'], attrs['exclude'],
                                               attr_regex, default)
-        
+
     def envCheckFilter(self, name, attr):
         """Check if a specific graph attribute is enabled or disabled through 
         the use of a filter based on include_<name> and exclude_<name> 
@@ -398,11 +395,11 @@ class MuninPlugin:
         """
         flt = self._filters.get(name)
         if flt:
-            return flt.check(attr) 
+            return flt.check(attr)
         else:
             raise AttributeError("Undefined filter: %s" % name)
-        
-    def envCheckFlag(self, name, default = False):
+
+    def envCheckFlag(self, name, default=False):
         """Check graph flag for enabling / disabling attributes through
         the use of <name> environment variable.
         
@@ -412,7 +409,7 @@ class MuninPlugin:
         @return:        Return True if the flag is enabled.
         
         """
-        if self._flags.has_key(name):
+        if name in self._flags:
             return self._flags[name]
         else:
             val = self._env.get(name)
@@ -425,9 +422,9 @@ class MuninPlugin:
                 self._flags[name] = False
                 return False
             else:
-                raise AttributeError("Value for flag %s, must be yes, no, on or off" 
+                raise AttributeError("Value for flag %s, must be yes, no, on or off"
                                      % name)
-                
+
     def debugEnabled(self):
         """Return True if plugin debugging is enabled.
         
@@ -435,7 +432,7 @@ class MuninPlugin:
             
         """
         return self._debug
-    
+
     def graphEnabled(self, graph_name):
         """Utility method to check if graph with the given name is enabled.
         
@@ -444,8 +441,8 @@ class MuninPlugin:
             
         """
         return not self.isMultigraph or self.envCheckFilter('graphs', graph_name)
-        
-    def saveState(self,  stateObj):
+
+    def saveState(self, stateObj):
         """Utility methos to save plugin state stored in stateObj to persistent 
         storage to permit access to previous state in subsequent plugin runs.
         
@@ -456,13 +453,13 @@ class MuninPlugin:
         
         """
         try:
-            fp = open(self._stateFile,  'w')
+            fp = open(self._stateFile, 'w')
             pickle.dump(stateObj, fp)
         except:
-            raise IOError("Failure in storing plugin state in file: %s" 
+            raise IOError("Failure in storing plugin state in file: %s"
                           % self._stateFile)
         return True
-    
+
     def restoreState(self):
         """Utility method to restore plugin state from persistent storage to 
         permit access to previous plugin state.
@@ -472,14 +469,14 @@ class MuninPlugin:
         """
         if os.path.exists(self._stateFile):
             try:
-                fp = open(self._stateFile,  'r')
+                fp = open(self._stateFile, 'r')
                 stateObj = pickle.load(fp)
             except:
-                raise IOError("Failure in reading plugin state from file: %s" 
+                raise IOError("Failure in reading plugin state from file: %s"
                               % self._stateFile)
             return stateObj
         return None
-        
+
     def appendGraph(self, graph_name, graph):
         """Utility method to associate Graph Object to Plugin.
         
@@ -492,10 +489,10 @@ class MuninPlugin:
         """
         self._graphDict[graph_name] = graph
         self._graphNames.append(graph_name)
-        if not self.isMultigraph  and len(self._graphNames) > 1:
+        if not self.isMultigraph and len(self._graphNames) > 1:
             raise AttributeError("Simple Munin Plugins cannot have more than one graph.")
-        
-    def appendSubgraph(self, parent_name,  graph_name, graph):
+
+    def appendSubgraph(self, parent_name, graph_name, graph):
         """Utility method to associate Subgraph Instance to Root Graph Instance.
 
         This utility method is for use in constructor of child classes for 
@@ -508,16 +505,16 @@ class MuninPlugin:
         """
         if not self.isMultigraph:
             raise AttributeError("Simple Munin Plugins cannot have subgraphs.")
-        if self._graphDict.has_key(parent_name):
-            if not self._subgraphDict.has_key(parent_name):
+        if parent_name in self._graphDict:
+            if not parent_name in self._subgraphDict:
                 self._subgraphDict[parent_name] = {}
                 self._subgraphNames[parent_name] = []
             self._subgraphDict[parent_name][graph_name] = graph
             self._subgraphNames[parent_name].append(graph_name)
         else:
             raise AttributeError("Invalid parent graph name %s used for subgraph %s."
-                % (parent_name,  graph_name))
-            
+                                 % (parent_name, graph_name))
+
     def setGraphVal(self, graph_name, field_name, val):
         """Utility method to set Value for Field in Graph.
         
@@ -532,10 +529,10 @@ class MuninPlugin:
         if graph.hasField(field_name):
             graph.setVal(field_name, val)
         else:
-            raise AttributeError("Invalid field name %s for graph %s." 
+            raise AttributeError("Invalid field name %s for graph %s."
                                  % (field_name, graph_name))
-    
-    def setSubgraphVal(self,  parent_name,  graph_name, field_name, val):
+
+    def setSubgraphVal(self, parent_name, graph_name, field_name, val):
         """Set Value for Field in Subgraph.
 
         The private method is for use in retrieveVals() method of child
@@ -552,9 +549,9 @@ class MuninPlugin:
             subgraph.setVal(field_name, val)
         else:
             raise AttributeError("Invalid field name %s for subgraph %s "
-                                 "of parent graph %s." 
+                                 "of parent graph %s."
                                  % (field_name, graph_name, parent_name))
-    
+
     def hasGraph(self, graph_name):
         """Return true if graph with name is registered to plugin.
         
@@ -562,8 +559,8 @@ class MuninPlugin:
         @return:           Boolean
         
         """
-        return self._graphDict.has_key(graph_name)
-    
+        return graph_name in self._graphDict
+
     def hasSubgraph(self, parent_name, graph_name):
         """Return true if Root Graph with name parent_name has a subgraph with 
         name graph_name.
@@ -574,7 +571,7 @@ class MuninPlugin:
         
         """
         return self._getSubGraph(parent_name, graph_name) is not None
-            
+
     def getGraphList(self):
         """Returns list of names of graphs registered to plugin.
         
@@ -582,7 +579,7 @@ class MuninPlugin:
         
         """
         return self._graphNames
-    
+
     def getGraphCount(self):
         """Returns number of graphs registered to plugin.
         
@@ -590,7 +587,7 @@ class MuninPlugin:
         
         """
         return len(self._graphNames)
-    
+
     def getSubgraphList(self, parent_name):
         """Returns list of names of subgraphs for Root Graph with name parent_name.
         
@@ -600,12 +597,12 @@ class MuninPlugin:
         """
         if not self.isMultigraph:
             raise AttributeError("Simple Munin Plugins cannot have subgraphs.")
-        if self._graphDict.has_key(parent_name):
+        if parent_name in self._graphDict:
             return self._subgraphNames[parent_name] or []
         else:
             raise AttributeError("Invalid parent graph name %s."
                                  % (parent_name,))
-            
+
     def getSubgraphCount(self, parent_name):
         """Returns number of subgraphs for Root Graph with name parent_name.
         
@@ -626,7 +623,7 @@ class MuninPlugin:
         """
         graph = self._graphDict.get(graph_name, True)
         return graph.hasField(field_name)
-    
+
     def subGraphHasField(self, parent_name, graph_name, field_name):
         """Return true if subgraph with name graph_name with parent graph with
         name parent_name has field with name field_name.
@@ -639,7 +636,7 @@ class MuninPlugin:
         """
         subgraph = self._getSubGraph(parent_name, graph_name, True)
         return subgraph.hasField(field_name)
-            
+
     def getGraphFieldList(self, graph_name):
         """Returns list of names of fields for graph with name graph_name.
         
@@ -649,7 +646,7 @@ class MuninPlugin:
         """
         graph = self._getGraph(graph_name, True)
         return graph.getFieldList()
-    
+
     def getGraphFieldCount(self, graph_name):
         """Returns number of fields for graph with name graph_name.
         
@@ -659,7 +656,7 @@ class MuninPlugin:
         """
         graph = self._getGraph(graph_name, True)
         return graph.getFieldCount()
-    
+
     def getSubgraphFieldList(self, parent_name, graph_name):
         """Returns list of names of fields for subgraph with name graph_name
         and parent graph with name parent_name.
@@ -671,7 +668,7 @@ class MuninPlugin:
         """
         graph = self._getSubGraph(parent_name, graph_name, True)
         return graph.getFieldList()
-    
+
     def getSubgraphFieldCount(self, parent_name, graph_name):
         """Returns number of fields for subgraph with name graph_name and parent 
         graph with name parent_name.
@@ -683,7 +680,7 @@ class MuninPlugin:
         """
         graph = self._getSubGraph(parent_name, graph_name, True)
         return graph.getFieldCount()
-        
+
     def retrieveVals(self):
         """Initialize measured values for Graphs.
 
@@ -721,13 +718,11 @@ class MuninPlugin:
                 print "multigraph %s" % self._getMultigraphID(parent_name)
             print self._formatConfig(graph.getConfig())
             print
-        if (self.isMultigraph and self._nestedGraphs 
-            and self._subgraphDict and self._subgraphNames):
+        if self.isMultigraph and self._nestedGraphs and self._subgraphDict and self._subgraphNames:
             for (parent_name, subgraph_names) in self._subgraphNames.iteritems():
                 for graph_name in subgraph_names:
                     graph = self._subgraphDict[parent_name][graph_name]
-                    print "multigraph %s" % self.getMultigraphID(parent_name, 
-                                                                 graph_name)
+                    print "multigraph %s" % self._getMultigraphID(parent_name, graph_name)
                     print self._formatConfig(graph.getConfig())
                     print
         return True
@@ -754,13 +749,11 @@ class MuninPlugin:
                 print "multigraph %s" % self._getMultigraphID(parent_name)
             print self._formatVals(graph.getVals())
             print
-        if (self.isMultigraph and self._nestedGraphs 
-            and self._subgraphDict and self._subgraphNames):
+        if self.isMultigraph and self._nestedGraphs and self._subgraphDict and self._subgraphNames:
             for (parent_name, subgraph_names) in self._subgraphNames.iteritems():
                 for graph_name in subgraph_names:
                     graph = self._subgraphDict[parent_name][graph_name]
-                    print "multigraph %s" % self.getMultigraphID(parent_name, 
-                                                                 graph_name)
+                    print "multigraph %s" % self._getMultigraphID(parent_name, graph_name)
                     print self._formatVals(graph.getVals())
                     print
         return True
@@ -796,10 +789,10 @@ class MuninGraph:
 
     """
 
-    def __init__(self, title, category = None, vlabel=None, info=None, 
-                 args =None, period=None, scale=None,  total=None, order=None, 
+    def __init__(self, title, category=None, vlabel=None, info=None,
+                 args=None, period=None, scale=None, total=None, order=None,
                  printf=None, width=None, height=None,
-                 autoFixNames = False):
+                 autoFixNames=False):
         """Initialize Munin Graph.
         
         @param title:        Graph Title
@@ -825,16 +818,16 @@ class MuninGraph:
                              by replacing them with '_'.
         
         """
-        self._graphAttrDict = dict((k,v) for (k,v) in locals().iteritems()
-                                    if (v is not None 
-                                        and k not in ('self', 'autoFixNames')))
+        self._graphAttrDict = dict((k, v) for (k, v) in locals().iteritems()
+                                   if (v is not None
+                                       and k not in ('self', 'autoFixNames')))
         self._fieldNameList = []
         self._fieldAttrDict = {}
         self._fieldValDict = {}
         self._autoFixNames = autoFixNames
 
-    def addField(self, name, label, type=None,  draw=None, info=None, #@ReservedAssignment
-                 extinfo=None, colour=None, negative=None, graph=None, 
+    def addField(self, name, label, type=None, draw=None, info=None, #@ReservedAssignment
+                 extinfo=None, colour=None, negative=None, graph=None,
                  min=None, max=None, cdef=None, line=None, #@ReservedAssignment
                  warning=None, critical=None):
         """Add field to Munin Graph
@@ -863,9 +856,9 @@ class MuninGraph:
             name = self._fixName(name)
             if negative is not None:
                 negative = self._fixName(negative)
-        self._fieldAttrDict[name] = dict(((k,v) for (k,v) in locals().iteritems()
-                                         if (v is not None
-                                             and k not in ('self',))))
+        self._fieldAttrDict[name] = dict(((k, v) for (k, v) in locals().iteritems()
+                                          if (v is not None
+                                              and k not in ('self',))))
         self._fieldNameList.append(name)
 
     def hasField(self, name):
@@ -877,8 +870,8 @@ class MuninGraph:
         """
         if self._autoFixNames:
             name = self._fixName(name)
-        return self._fieldAttrDict.has_key(name)
-    
+        return name in self._fieldAttrDict
+
     def getFieldList(self):
         """Returns list of field names registered to Munin Graph.
         
@@ -886,7 +879,7 @@ class MuninGraph:
         
         """
         return self._fieldNameList
-    
+
     def getFieldCount(self):
         """Returns the number of fields for Munin Graph.
         
@@ -894,7 +887,7 @@ class MuninGraph:
         
         """
         return len(self._fieldNameList)
-    
+
     def getConfig(self):
         """Returns dictionary of config entries for Munin Graph.
         
@@ -909,7 +902,7 @@ class MuninGraph:
         """Set value for field in graph.
         
         @param name   : Graph Name
-        @param value  : Value for field. 
+        @param val  : Value for field.
         
         """
         if self._autoFixNames:
@@ -922,15 +915,15 @@ class MuninGraph:
         @return: List of name-value pairs.
         
         """
-        return [(name, self._fieldValDict.get(name)) 
+        return [(name, self._fieldValDict.get(name))
                 for name in self._fieldNameList]
-    
+
     def _fixName(self, name):
         """Replace invalid characters in field names with underscore.
             @param name: Original name.
             @return:     Fixed name.
             
-        """        
+        """
         return re.sub('[^A-Za-z0-9_]', '_',
                       re.sub('^[^A-Za-z_]', '_', name))
 
@@ -948,7 +941,7 @@ def muninMain(pluginClass, argv=None, env=None, debug=False):
         argv = sys.argv
     if env is None:
         env = os.environ
-    debug = debug or env.has_key('MUNIN_DEBUG')
+    debug = debug or 'MUNIN_DEBUG' in env
     if len(argv) > 1 and argv[1] == 'autoconf':
         autoconf = True
     else:
@@ -972,6 +965,7 @@ def muninMain(pluginClass, argv=None, env=None, debug=False):
             else:
                 return 1
 
+
 def fixLabel(label, maxlen, delim=None, repl='', truncend=True):
     """Truncate long graph and field labels.
     
@@ -989,11 +983,11 @@ def fixLabel(label, maxlen, delim=None, repl='', truncend=True):
         return label
     else:
         maxlen -= len(repl)
-        if delim is not None:  
+        if delim is not None:
             if truncend:
                 end = label.rfind(delim, 0, maxlen)
                 if end > 0:
-                    return label[:end+1] + repl
+                    return label[:end + 1] + repl
             else:
                 start = label.find(delim, len(label) - maxlen)
                 if start > 0:
@@ -1002,6 +996,3 @@ def fixLabel(label, maxlen, delim=None, repl='', truncend=True):
             return label[:maxlen] + repl
         else:
             return repl + label[-maxlen:]
-            
-            
-    

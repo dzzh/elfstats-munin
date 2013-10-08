@@ -2,20 +2,20 @@ import os
 import pkgutil
 import glob
 from setuptools import setup, find_packages
-import pymunin #@UnusedImport
+import pymunin
 import pymunin.plugins
 
 PYMUNIN_SCRIPT_FILENAME_PREFIX = u'pymunin'
 
-if hasattr(pkgutil, "iter_modules"): # Python > 2.5
+if hasattr(pkgutil, "iter_modules"):  # Python > 2.5
     modules = [modname for importer, modname, ispkg in 
                pkgutil.iter_modules(pymunin.plugins.__path__)]
 else:
     modules = []
     for path in glob.glob(os.path.join(pymunin.plugins.__path__[0], 
                                        u'[A-Za-z]*.py')):
-        file = os.path.basename(path)
-        modules.append(file[:-3])
+        file_path = os.path.basename(path)
+        modules.append(file_path[:-3])
 
 console_scripts = []
 plugin_names = []
@@ -29,7 +29,7 @@ for modname in modules:
     console_scripts.append(u'%(script_name)s = %(script_path)s:%(entry)s' % params)
 
 setup(
-    name='pymunin-tomtom',
+    name='elfstats-munin',
     version=pymunin.__version__,
     author=pymunin.__author__,
     author_email=pymunin.__email__,
@@ -37,20 +37,20 @@ setup(
     maintainer_email=pymunin.__email__,
     packages=find_packages(),
     include_package_data=True,
-    url='http://vos.intra.local/display/SS3/Monitoring+Apache+performance+at+Community+servers+with+Munin',
+    url='https://github.com/dzzh/elfstats-munin',
     license=pymunin.__license__,
     description=u'Python Module for developing Munin Multigraph Monitoring Plugins.',
     classifiers=[
         'Topic :: System :: Monitoring',
-        'Intended Audience :: Developers',
+        'Intended Audience :: System Administrators',
         'License :: OSI Approved :: GNU General Public License (GPL)',
-        'Programming Language :: Python',
+        'Programming Language :: Python :: 2 :: Only',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Development Status :: 4 - Beta',
         'Operating System :: RHEL 5/6',
     ],
     entry_points={'console_scripts': console_scripts},
-    data_files = [
-        ('/etc/munin/plugin-conf.d',['config/tomtomstats.conf']),
+    data_files=[
+        ('/etc/munin/plugin-conf.d', ['config/elfstats.conf']),
     ]
 )
