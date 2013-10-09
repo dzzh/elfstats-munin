@@ -12,13 +12,14 @@ import re
 import cPickle as pickle
 
 __author__ = "Ali Onur Uyar"
+__author_email__ = "aouyar@gmail.com"
 __copyright__ = "Copyright 2011, Ali Onur Uyar"
 __credits__ = ["Samuel Stauffer (https://github.com/samuel)",
                "Mark Lavin (https://github.com/mlavin)"]
 __license__ = "GPL"
-__version__ = "1.0"
+__version__ = "1.0-dev"
 __maintainer__ = "Zmicier Zaleznicenka"
-__email__ = "Zmicier.Zaleznicenka@gmail.com"
+__maintainer_email__ = "Zmicier.Zaleznicenka@gmail.com"
 __status__ = "Development"
 
 maxLabelLenGraphSimple = 40

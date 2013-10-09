@@ -1,6 +1,8 @@
 #Generated files
 build/
 dist/
+elfstats_munin.egg-info/
+*.pyc
 
 #IDE configuration
 .idea/
