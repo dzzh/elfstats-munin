@@ -11,7 +11,7 @@ Displays number of calls and stalled calls for method groups.
 
 import sys
 from pymunin import MuninPlugin, MuninGraph, muninMain
-from pysysinfo.elfstats import ElfstatsInfo
+from pysysinfo.elfstats_munin import ElfstatsInfo
 
 NO_DATA_GRAPH = 'elfstats_calls_no_data'
 

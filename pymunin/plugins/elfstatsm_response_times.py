@@ -10,7 +10,7 @@ Displays total and average response times for method groups (except for small on
 #%# capabilities=autoconf suggest
 import sys
 from pymunin import MuninPlugin, MuninGraph, muninMain
-from pysysinfo.elfstats import ElfstatsInfo, EMPTY_VALUE
+from pysysinfo.elfstats_munin import ElfstatsInfo, EMPTY_VALUE
 
 NO_DATA_GRAPH = 'elfstats_response_times_no_data'
 
