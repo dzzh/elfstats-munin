@@ -14,9 +14,6 @@ import pymunin.plugins
 PYMUNIN_PLUGIN_DIR = u'./share/munin/plugins'
 
 
-def read(file_name):
-    return open(os.path.join(os.path.dirname(__file__), file_name)).read()
-
 if hasattr(pkgutil, "iter_modules"):  # Python > 2.5
     modules = [modname for importer, modname, ispkg in 
                pkgutil.iter_modules(pymunin.plugins.__path__)]
@@ -50,20 +47,30 @@ class install(_install):
                 os.path.join(self.prefix, PYMUNIN_PLUGIN_DIR))
         else:
             munin_plugin_dir = os.path.normpath(
-                os.path.join(self.root, os.path.relpath(self.prefix, '/'), PYMUNIN_PLUGIN_DIR))
+                os.path.join(self.root, '.'+self.prefix, PYMUNIN_PLUGIN_DIR))
 
         _install.run(self)
 
         # Installing the plugins requires write permission to plugins directory
-        # (/usr/share/munin/plugins) which is default owned by root.
+        # (/usr/share/munin/plugins) which is by default owned by root.
         print "Munin Plugin Directory: %s" % munin_plugin_dir
-        if os.path.exists(munin_plugin_dir):
+        if self.root or os.path.exists(munin_plugin_dir):
             try:
+                if not os.path.exists(munin_plugin_dir):
+                    os.makedirs(munin_plugin_dir)
+                lines = []
                 for name in plugin_names:
                     source = os.path.join(self.install_scripts, name)
                     destination = os.path.join(munin_plugin_dir, name)
-                    print "Installing %s to %s." % (name, munin_plugin_dir)
                     shutil.copy(source, destination)
+                    if self.root:
+                        lines.append(destination.split(self.root)[1])
+                    else:
+                        lines.append(destination)
+                #If making an RPM with build_rpm, add new files to INSTALLED_FILES to properly install them later.
+                if os.path.exists('INSTALLED_FILES'):
+                    with open('INSTALLED_FILES', 'a') as f:
+                        f.write('\n'.join(lines))
             except IOError, e:
                 if e.errno in (errno.EACCES, errno.ENOENT):
                     # Access denied or file/directory not found.
@@ -89,6 +96,7 @@ class install(_install):
                     print "*" * 78
                 else:
                     # Raise original exception
+                    print e.message
                     raise
 
 setup(
@@ -104,7 +112,6 @@ setup(
     license=pymunin.__license__,
     description=u'A set of Munin monitoring plugins to display aggregated data from web servers access logs '
                 u'that is gathered using elfstatsd. Based on PyMunin framework.',
-    long_description=read('README.md'),
     keywords="munin plugin monitoring apache tomcat nginx elf access log",
     platforms=['POSIX'],
     classifiers=[
