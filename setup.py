@@ -8,18 +8,18 @@ import shutil
 import errno
 from setuptools import setup, find_packages
 from setuptools.command.install import install as _install
-import pymunin
-import pymunin.plugins
+import elfstatsm
+import elfstatsm.plugins
 
-PYMUNIN_PLUGIN_DIR = u'./share/munin/plugins'
+ELFSTATSM_PLUGIN_DIR = u'./share/munin/plugins'
 
 
 if hasattr(pkgutil, "iter_modules"):  # Python > 2.5
     modules = [modname for importer, modname, ispkg in 
-               pkgutil.iter_modules(pymunin.plugins.__path__)]
+               pkgutil.iter_modules(elfstatsm.plugins.__path__)]
 else:
     modules = []
-    for path in glob.glob(os.path.join(pymunin.plugins.__path__[0], 
+    for path in glob.glob(os.path.join(elfstatsm.plugins.__path__[0],
                                        u'[A-Za-z]*.py')):
         file_path = os.path.basename(path)
         modules.append(file_path[:-3])
@@ -29,7 +29,7 @@ plugin_names = []
 for modname in modules:
     params = {
         'script_name': modname,
-        'script_path': u'%s.%s' % (pymunin.plugins.__name__,  modname),
+        'script_path': u'%s.%s' % (elfstatsm.plugins.__name__,  modname),
         'entry': 'main',
     }
     plugin_names.append(modname)
@@ -44,10 +44,10 @@ class install(_install):
             munin_plugin_dir = os.environ.get('MUNIN_PLUGIN_DIR')
         elif self.root is None:
             munin_plugin_dir = os.path.normpath(
-                os.path.join(self.prefix, PYMUNIN_PLUGIN_DIR))
+                os.path.join(self.prefix, ELFSTATSM_PLUGIN_DIR))
         else:
             munin_plugin_dir = os.path.normpath(
-                os.path.join(self.root, '.'+self.prefix, PYMUNIN_PLUGIN_DIR))
+                os.path.join(self.root, '.'+self.prefix, ELFSTATSM_PLUGIN_DIR))
 
         _install.run(self)
 
@@ -101,15 +101,15 @@ class install(_install):
 
 setup(
     name='elfstats-munin',
-    version=pymunin.__version__,
-    author=pymunin.__author__,
-    author_email=pymunin.__author_email__,
-    maintainer=pymunin.__maintainer__,
-    maintainer_email=pymunin.__maintainer_email__,
+    version=elfstatsm.__version__,
+    author=elfstatsm.__author__,
+    author_email=elfstatsm.__author_email__,
+    maintainer=elfstatsm.__maintainer__,
+    maintainer_email=elfstatsm.__maintainer_email__,
     packages=find_packages(),
     include_package_data=True,
     url='https://github.com/dzzh/elfstats-munin',
-    license=pymunin.__license__,
+    license=elfstatsm.__license__,
     description=u'A set of Munin monitoring plugins to display aggregated data from web servers access logs '
                 u'that is gathered using elfstatsd. Based on PyMunin framework.',
     keywords="munin plugin monitoring apache tomcat nginx elf access log",

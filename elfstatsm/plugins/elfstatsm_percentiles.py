@@ -10,8 +10,8 @@ Displays 50, 90 and 99 percentiles of response times for method calls as well as
 #%# capabilities=autoconf suggest
 
 import sys
-from pymunin import MuninPlugin, MuninGraph, muninMain
-from pysysinfo.elfstats_munin import ElfstatsInfo
+from elfstatsm import MuninPlugin, MuninGraph, muninMain
+from elfstatsm.elfstats_munin import ElfstatsInfo
 
 NO_DATA_GRAPH = 'elfstats_percentile_no_data'
 

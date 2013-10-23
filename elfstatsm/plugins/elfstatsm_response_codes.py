@@ -9,8 +9,8 @@ Displays response codes grouped by 100 and important codes placed at separate ch
 #%# family=auto
 #%# capabilities=autoconf suggest
 import sys
-from pymunin import MuninPlugin, MuninGraph, muninMain
-from pysysinfo.elfstats_munin import ElfstatsInfo
+from elfstatsm import MuninPlugin, MuninGraph, muninMain
+from elfstatsm.elfstats_munin import ElfstatsInfo
 
 NO_DATA_GRAPH = 'elfstats_response_codes_no_data'
 

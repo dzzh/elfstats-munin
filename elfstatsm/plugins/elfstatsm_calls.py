@@ -10,8 +10,8 @@ Displays number of calls and stalled calls for method groups.
 #%# capabilities=autoconf suggest
 
 import sys
-from pymunin import MuninPlugin, MuninGraph, muninMain
-from pysysinfo.elfstats_munin import ElfstatsInfo
+from elfstatsm import MuninPlugin, MuninGraph, muninMain
+from elfstatsm.elfstats_munin import ElfstatsInfo
 
 NO_DATA_GRAPH = 'elfstats_calls_no_data'
 
