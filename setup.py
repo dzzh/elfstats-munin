@@ -11,7 +11,7 @@ from setuptools.command.install import install as _install
 import elfstatsm
 import elfstatsm.plugins
 
-ELFSTATSM_PLUGIN_DIR = u'./share/munin/plugins'
+ELFSTATSM_PLUGIN_DIR = u'/usr/share/munin/plugins'
 
 
 if hasattr(pkgutil, "iter_modules"):  # Python > 2.5
@@ -43,11 +43,9 @@ class install(_install):
         if 'MUNIN_PLUGIN_DIR' in os.environ:
             munin_plugin_dir = os.environ.get('MUNIN_PLUGIN_DIR')
         elif self.root is None:
-            munin_plugin_dir = os.path.normpath(
-                os.path.join(self.prefix, ELFSTATSM_PLUGIN_DIR))
+            munin_plugin_dir = ELFSTATSM_PLUGIN_DIR
         else:
-            munin_plugin_dir = os.path.normpath(
-                os.path.join(self.root, '.'+self.prefix, ELFSTATSM_PLUGIN_DIR))
+            munin_plugin_dir = os.path.normpath(os.path.join(self.root, '.' + ELFSTATSM_PLUGIN_DIR))
 
         _install.run(self)
 
