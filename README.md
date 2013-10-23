@@ -22,11 +22,11 @@ If you find the installation instructions here somewhat unclear, you can also re
 
 * Switch to the virtual environment by issuing `source /path/to/virtualenv/bin/activate` if you want to use it. If you want to install the plugins using your default Python, you can skip this step. Just make sure that your Python version is either 2.6.x or 2.7.x by running `python --version`.
 
-* Install plugins using the setup script: `python setup.py install`. 
+* Install the plugins using the setup script: `python setup.py install`. 
 
-If you use virtual environment, executable launchers for the Munin plugins will be placed by default to `/path/to/virtualenv/usr/share/munin/plugins`. If you work with default Python, they will be placed in `/usr/share/munin/plugins` by default. This directory can be substituted with one specified in `MUNIN_PLUGIN_DIR` environmental variable if you need in such customization. 
+After you install the plugins, their launchers will be placed in `/usr/share/munin/plugins` by default. This directory can be substituted with one specified in `MUNIN_PLUGIN_DIR` environmental variable, if you need in such customization. 
 
-As `/usr/share/munin/plugins` is owned by root, setup script will not able to add plugin launchers there if default Python is used and installation script is not run by a privileged user. To overcome this issue, a post-installation script will be created and placed into `/usr/local/bin/elfstats-munin-install`. Run it as root to copy the launchers to where Munin will find them. 
+As `/usr/share/munin/plugins` is owned by root, setup script will not able to add plugin launchers there, if not run by a privileged user. To overcome this issue, a post-installation script will be created and placed into `/usr/bin/elfstats-munin-install`. Run it as root to copy the launchers to where Munin will find them. 
 
 ### Building and installing RPM for RHEL 6
 
@@ -42,7 +42,7 @@ As `/usr/share/munin/plugins` is owned by root, setup script will not able to ad
 
 When elfstats-munin is installed, all the plugins are inactive. To activate them, you have to link necessary plugins to `/etc/munin/plugins`. Thus, if you want to use all the plugins and you have installed elfstats-munin using default Python, you can activate them with the following command: `ln -s /usr/share/munin/plugins/elfstatsm_* /etc/munin/plugins/`.
 
-After the plugins are activated, you have to configure them using `/etc/munin/plugin-conf.d/elfstats.conf` file. For each plugin you should add a section specifying data file it should read and other settings. Example sections are provided in this file as comments. 
+After the plugins are activated, you have to configure them using `/etc/munin/plugin-conf.d/elfstats.conf` file. For each plugin you should add a section specifying data file it should read and other settings. Examples are provided in the file. 
 
 If you want to keep multiple plugin instances to work with several different access log files at once, link them to `/etc/munin/plugins` after different names and configure `elfstats.conf` accordingly.
 
