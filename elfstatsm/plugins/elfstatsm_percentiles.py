@@ -15,6 +15,12 @@ from elfstatsm.elfstats_munin import ElfstatsInfo
 
 NO_DATA_GRAPH = 'elfstats_percentile_no_data'
 
+# List of percentiles to draw. Same percentiles have to be specified in settings.LATENCY_PERCENTILES in elfstatsd.
+# Format: (percentile: int 0-100, munin draw format, color)
+PERCENTILES = [(50, 'LINE1', '39E639'),
+               (90, 'LINE1', 'FF9400'),
+               (99, 'LINE2', 'FF0000')]
+
 
 class MuninElfstatsPercentilesPlugin(MuninPlugin):
     """Multigraph Munin Plugin for monitoring web servers."""
@@ -58,11 +64,10 @@ class MuninElfstatsPercentilesPlugin(MuninPlugin):
                                    args='--base 1000 --logarithmic --units=si',
                                    vlabel='Response time in ms')
                 graph.addField('min', 'shortest', draw='LINE1', type='GAUGE', info='longest', colour='67E667')
-                graph.addField('p50', 'median', draw='LINE1', type='GAUGE', info='median', colour='39E639')
                 graph.addField('avg', 'average', draw='LINE2', type='GAUGE', info='average', colour='00CC00')
-                graph.addField('p90', '90%', draw='LINE1', type='GAUGE', info='90%', colour='FF9400')
                 graph.addField('max', 'longest', draw='LINE1', type='GAUGE', info='longest', colour='FF7373')
-                graph.addField('p99', '99%', draw='LINE2', type='GAUGE', info='99%', colour='FF0000')
+                for p, draw, colour in PERCENTILES:
+                    graph.addField('p' + str(p), str(p) + '%', draw=draw, type='GAUGE', info=str(p)+'%', colour=colour)
                 self.appendGraph(graph_name, graph)
 
     def retrieveVals(self):
@@ -77,11 +82,10 @@ class MuninElfstatsPercentilesPlugin(MuninPlugin):
             graph_name = method.get_graph_name()
             if self.hasGraph(graph_name):
                 self.setGraphVal(graph_name, 'min', method.min)
-                self.setGraphVal(graph_name, 'p50', method.p50)
                 self.setGraphVal(graph_name, 'avg', method.avg)
-                self.setGraphVal(graph_name, 'p90', method.p90)
                 self.setGraphVal(graph_name, 'max', method.max)
-                self.setGraphVal(graph_name, 'p99', method.p99)
+                for p, _, _ in PERCENTILES:
+                    self.setGraphVal(graph_name, 'p' + str(p), method.get_percentile(p))
 
     def autoconf(self):
         return True

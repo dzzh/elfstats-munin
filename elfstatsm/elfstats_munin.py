@@ -15,6 +15,8 @@ LOG_FILE = "/tmp/elfstats-munin.log"
 
 EMPTY_VALUE = 'U'
 
+logger = logging.getLogger(__name__)
+
 
 class ElfstatsInfo:
     """Class to retrieve stats for web servers"""
@@ -26,12 +28,11 @@ class ElfstatsInfo:
         self.response_codes = {}
         self.total_records = {}
 
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.INFO)
+        logger.setLevel(logging.INFO)
         formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
         handler = logging.FileHandler(LOG_FILE)
         handler.setFormatter(formatter)
-        self.logger.addHandler(handler)
+        logger.addHandler(handler)
         self.update_data()
 
     def update_data(self):
@@ -41,7 +42,7 @@ class ElfstatsInfo:
 
         parser = ConfigParser.RawConfigParser()
         if not self.dump_file:
-            self.logger.error('Dump file not set. Check env.dump_file setting in plugin configuration')
+            logger.error('Dump file not set. Check env.dump_file setting in plugin configuration')
         parser.read(self.dump_file)
 
         sections = parser.sections()
@@ -56,14 +57,17 @@ class ElfstatsInfo:
                 method.min = parser.get(section, 'shortest')
                 method.max = parser.get(section, 'longest')
                 method.avg = parser.get(section, 'average')
-                method.p50 = parser.get(section, 'p50')
-                method.p90 = parser.get(section, 'p90')
-                method.p99 = parser.get(section, 'p99')
+                for option in parser.options(section):
+                    if option.startswith('p') and 2 <= len(option) <= 4:
+                        method.percentiles[option[1:]] = parser.get(section, option)
+
                 self.methods[method.get_key()] = method
+
             elif section == 'response_codes':
                 for option in parser.options(section):
                     code = option[2:]
                     self.response_codes[code] = parser.get(section, option)
+
             elif section == 'records':
                 for option in parser.options(section):
                     self.total_records[option] = parser.get(section, option)
@@ -87,6 +91,7 @@ class ElfstatsInfo:
         if str(status) in self.total_records:
             return self.total_records[str(status)]
         else:
+            logger.error('Status %s not found in data' % status)
             return EMPTY_VALUE
 
     def get_method_by_key(self, key):
@@ -104,6 +109,7 @@ class ElfstatsInfo:
 
 
 class MethodCallData():
+
     def __init__(self, group, name):
         self.group = group
         self.name = name
@@ -112,9 +118,7 @@ class MethodCallData():
         self.avg = EMPTY_VALUE
         self.calls = EMPTY_VALUE
         self.stalled_calls = EMPTY_VALUE
-        self.p50 = EMPTY_VALUE
-        self.p90 = EMPTY_VALUE
-        self.p99 = EMPTY_VALUE
+        self.percentiles = {}
 
     def get_key(self):
         return self.group + '_' + self.name
@@ -127,3 +131,10 @@ class MethodCallData():
 
     def get_graph_group_prefix(self):
         return 'elfstats_%s_' % self.group.lower()
+
+    def get_percentile(self, percent):
+        if str(percent) in self.percentiles:
+            return self.percentiles[str(percent)]
+        else:
+            logger.error('Percentile %s not found in data for method %s' % (percent, self.name))
+            return EMPTY_VALUE
