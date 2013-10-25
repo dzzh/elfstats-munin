@@ -8,7 +8,7 @@ import logging
 IMPORTANT_RESPONSE_CODES = []
 
 #No aggregate response time graphs for these graphs will be created
-SMALL_GROUPS = ['server', 'main', 'activation']
+SMALL_GROUPS = ['small', 'smaller', 'smallest']
 
 #Log file for plugins
 LOG_FILE = "/tmp/elfstats-munin.log"
@@ -60,7 +60,8 @@ class ElfstatsInfo:
                 self.methods[method.get_key()] = method
             if section == 'response_codes':
                 for option in parser.options(section):
-                    self.response_codes[option] = parser.get(section, option)
+                    code = option[2:]
+                    self.response_codes[code] = parser.get(section, option)
 
     def get_method_keys(self):
         return sorted(self.methods.keys())
