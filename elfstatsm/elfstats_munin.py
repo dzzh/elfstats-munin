@@ -22,8 +22,9 @@ class ElfstatsInfo:
     def __init__(self, dump_file):
         self.dump_file = dump_file
 
-        self.methods = dict()
-        self.response_codes = dict()
+        self.methods = {}
+        self.response_codes = {}
+        self.total_records = {}
 
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
@@ -36,6 +37,7 @@ class ElfstatsInfo:
     def update_data(self):
         self.methods.clear()
         self.response_codes.clear()
+        self.total_records.clear()
 
         parser = ConfigParser.RawConfigParser()
         if not self.dump_file:
@@ -58,10 +60,13 @@ class ElfstatsInfo:
                 method.p90 = parser.get(section, 'p90')
                 method.p99 = parser.get(section, 'p99')
                 self.methods[method.get_key()] = method
-            if section == 'response_codes':
+            elif section == 'response_codes':
                 for option in parser.options(section):
                     code = option[2:]
                     self.response_codes[code] = parser.get(section, option)
+            elif section == 'records':
+                for option in parser.options(section):
+                    self.total_records[option] = parser.get(section, option)
 
     def get_method_keys(self):
         return sorted(self.methods.keys())
@@ -72,6 +77,15 @@ class ElfstatsInfo:
     def get_number_responses_by_code(self, code):
         if str(code) in self.response_codes:
             return self.response_codes[str(code)]
+        else:
+            return EMPTY_VALUE
+
+    def get_records_statuses(self):
+        return sorted(self.total_records.keys())
+
+    def get_number_records_by_status(self, status):
+        if str(status) in self.total_records:
+            return self.total_records[str(status)]
         else:
             return EMPTY_VALUE
 
