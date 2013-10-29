@@ -25,7 +25,7 @@ PERCENTILES = [(50, 'LINE1', '39E639'),
 class MuninElfstatsPercentilesPlugin(MuninPlugin):
     """Multigraph Munin Plugin for monitoring web servers."""
 
-    plugin_name = 'elfstats_percentiles'
+    plugin_name = 'elfstatsm_percentiles'
     isMultigraph = True
     isMultiInstance = True
 

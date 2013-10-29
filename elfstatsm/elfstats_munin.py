@@ -27,6 +27,7 @@ class ElfstatsInfo:
         self.methods = {}
         self.response_codes = {}
         self.total_records = {}
+        self.patterns = {}
 
         logger.setLevel(logging.INFO)
         formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -39,6 +40,7 @@ class ElfstatsInfo:
         self.methods.clear()
         self.response_codes.clear()
         self.total_records.clear()
+        self.patterns.clear()
 
         parser = ConfigParser.RawConfigParser()
         if not self.dump_file:
@@ -72,6 +74,10 @@ class ElfstatsInfo:
                 for option in parser.options(section):
                     self.total_records[option] = parser.get(section, option)
 
+            elif section == 'patterns':
+                for option in parser.options(section):
+                    self.patterns[option] = parser.get(section, option)
+
     def get_method_keys(self):
         return sorted(self.methods.keys())
 
@@ -93,6 +99,16 @@ class ElfstatsInfo:
         else:
             logger.error('Status %s not found in data' % status)
             return EMPTY_VALUE
+
+    def get_pattern_ids(self):
+        ids = set([p.rsplit('.', 1)[0] for p in self.patterns])
+        return sorted(list(ids))
+
+    def get_value_for_pattern(self, pattern_id, suffix):
+        for match, value in self.patterns.iteritems():
+            if match.startswith(pattern_id) and match.endswith('.' + suffix):
+                return value
+        return EMPTY_VALUE
 
     def get_method_by_key(self, key):
         """

@@ -22,7 +22,7 @@ STATUSES_TO_SKIP = set(['total', 'parsed'])
 class MuninElfstatsTotalRecordsPlugin(MuninPlugin):
     """Multigraph Munin Plugin for monitoring web servers."""
 
-    plugin_name = 'elfstats_total_records'
+    plugin_name = 'elfstatsm_total_records'
     isMultigraph = True
     isMultiInstance = True
 
@@ -58,7 +58,7 @@ class MuninElfstatsTotalRecordsPlugin(MuninPlugin):
                 graph = self._getGraph(graph_name)
             else:
                 graph = MuninGraph('elfstats - Number of log records per status', self._category,
-                                   info='Total number of records ',
+                                   info='Total number of records',
                                    args='--base 1000  --logarithmic --units=si',
                                    vlabel='Number of records per 5 min')
                 self.appendGraph(graph_name, graph)

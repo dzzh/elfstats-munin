@@ -18,7 +18,7 @@ NO_DATA_GRAPH = 'elfstats_response_times_no_data'
 class MuninElfstatsResponseTimesPlugin(MuninPlugin):
     """Multigraph Munin Plugin for monitoring web servers."""
 
-    plugin_name = 'elfstats_response_times'
+    plugin_name = 'elfstatsm_response_times'
     isMultigraph = True
     isMultiInstance = True
 

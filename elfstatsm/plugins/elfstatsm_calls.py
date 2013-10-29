@@ -19,7 +19,7 @@ NO_DATA_GRAPH = 'elfstats_calls_no_data'
 class MuninElfstatsCallsPlugin(MuninPlugin):
     """Multigraph Munin Plugin for monitoring web servers."""
 
-    plugin_name = 'elfstats_calls'
+    plugin_name = 'elfstatsm_calls'
     isMultigraph = True
     isMultiInstance = True
 
