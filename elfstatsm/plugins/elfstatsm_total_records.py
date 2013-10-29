@@ -15,7 +15,8 @@ from elfstatsm.elfstats_munin import ElfstatsInfo
 NO_DATA_GRAPH = 'elfstats_total_records_no_data'
 
 #Values for these statuses will not be shown on the graph
-STATUSES_TO_SKIP = {'total', 'parsed'}
+# noinspection PySetFunctionToLiteral
+STATUSES_TO_SKIP = set(['total', 'parsed'])
 
 
 class MuninElfstatsTotalRecordsPlugin(MuninPlugin):
