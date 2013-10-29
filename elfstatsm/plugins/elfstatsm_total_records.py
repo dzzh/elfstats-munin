@@ -57,7 +57,7 @@ class MuninElfstatsTotalRecordsPlugin(MuninPlugin):
             if self.hasGraph(graph_name):
                 graph = self._getGraph(graph_name)
             else:
-                graph = MuninGraph('elfstats - Total records per status', self._category,
+                graph = MuninGraph('elfstats - Number of log records per status', self._category,
                                    info='Total number of records ',
                                    args='--base 1000  --logarithmic --units=si',
                                    vlabel='Number of records per 5 min')
