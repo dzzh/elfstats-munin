@@ -1,14 +1,16 @@
-# elfstats-munin
+# Elfstats-munin
 
-A set of Munin plugins for visualizing aggregated data from web servers' access logs in Extended Log Format (ELF). Supports Apache, Tomcat, Nginx and other web servers with access logs in ELF format. These plugins are a part of `elfstats` project. They are supposed to work with aggregated data prepared by [elfstatsd][] daemon. Using elfstatsd and these plugins it is possible to monitor such metrics as number of calls per request, aggregated latencies (min, max, avg, percentiles) per request and response codes distribution. Development plans include adding more metrics.
+Elfstats-munin is a data visualization component of the [elfstats][] project.
+
+It is a set of Munin plugins for visualizing aggregated data from web servers' access logs in Extended Log Format (ELF) that supports Apache, Tomcat, Nginx and some other HTTP servers. These plugins are supposed to work with the report files  prepared by the [elfstatsd][] daemon. Using elfstatsd and these plugins it is possible to monitor such metrics as the number of calls and slow calls, aggregated latencies (min, max, avg, percentiles), response codes distribution, the number of matches for the specific patterns and more. All these statistics are reported per different request groups specified by the user and can be as detailed as needed.  Development plans include adding more metrics.
 
 Elfstats-munin plugins are written in Python programming language and are based on [PyMunin][] framework. Python 2.6.x/2.7.x and [elfstatsd][] are required for their correct operation. Migration to Python 3 is possible in future.
 
 ## Build and install
 
-Elfstats-munin plugins can be installed either from source codes or as an RPM package. To simplify elfstats-munin installation, it is planned to add it to PyPi in future. 
+Elfstats-munin plugins can be installed either from the source codes or as an RPM package. To simplify elfstats-munin installation, it is planned to add it to PyPi in future. 
 
-Pre-built RPM files for RHEL6_x64 distribution can be found in [Releases](https://github.com/dzzh/elfstats-munin/releases). The resulting RPMs may also work with other RPM-based Linux distributions, but this has not been tested. 
+Pre-built RPM files for RHEL6_x64 distribution can be found in [Releases](https://github.com/dzzh/elfstats-munin/releases). The resulting RPMs may also work with the other RPM-based Linux distributions, but this has not been tested yet. 
 
 Packaging scripts for non-RPM-based POSIX distributions are not yet implemented. Let me know if you are interested in having a package for your OS. Also, if you need in a distribution in a different format, you can build elfstats-munin from the sources as explained below.
 
@@ -16,7 +18,7 @@ It is recommended, though not required, to setup [a virtual environment](http://
 
 If you find the installation instructions here somewhat unclear, you can also refer to [PyMunin installation guide](http://aouyar.github.io/PyMunin/#installation).
 
-### Installing elfstats-munin from source codes
+### Installing elfstats-munin from the source codes
 
 * Clone the repository: `git clone https://github.com/dzzh/elfstats-munin.git` and enter it with `cd elfstats-munin`.
 
@@ -40,9 +42,9 @@ As `/usr/share/munin/plugins` is owned by root, setup script will not able to ad
 
 ## Configure
 
-When elfstats-munin is installed, all the plugins are inactive. To activate them, you have to link necessary plugins to `/etc/munin/plugins`. Thus, if you want to use all the plugins and you have installed elfstats-munin using default Python, you can activate them with the following command: `ln -s /usr/share/munin/plugins/elfstatsm_* /etc/munin/plugins/`.
+When elfstats-munin is installed, all the plugins will be inactive. To activate them, you have to link the necessary plugins to `/etc/munin/plugins`. Thus, if you want to use all the plugins and you have installed elfstats-munin using default Python, you can activate them with the following command: `ln -s /usr/share/munin/plugins/elfstatsm_* /etc/munin/plugins/`.
 
-After the plugins are activated, you have to configure them using `/etc/munin/plugin-conf.d/elfstats.conf` file. For each plugin you should add a section specifying data file it should read and other settings. Examples are provided in the file. 
+After the plugins are activated, you have to configure them using `/etc/munin/plugin-conf.d/elfstats.conf` file. For each plugin you should add a section specifying the report file it should read and the other settings. The examples are provided in the configuration file. 
 
 If you want to keep multiple plugin instances to work with several different access log files at once, link them to `/etc/munin/plugins` after different names and configure `elfstats.conf` accordingly.
 
@@ -69,6 +71,7 @@ Copyright © 2013 [Źmicier Žaleźničenka][me] & Andriy Yakovlev.
 Developed at [TomTom](http://tomtom.com). Inspired by [Oleg Sigida](http://linkedin.com/in/olegsigida/).
 
 [me]: https://github.com/dzzh
+[elfstats]: https://github.com/dzzh/elfstats
 [elfstatsd]: https://github.com/dzzh/elfstatsd
 [elfstats-env]: https://github.com/dzzh/elfstats-env
 [PyMunin]: http://aouyar.github.io/PyMunin/
